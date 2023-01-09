@@ -69,7 +69,7 @@ class DiscreteSchedule(nn.Module):
         dists = log_sigma - self.log_sigmas[:, None]
         if quantize:
             return dists.abs().argmin(dim=0).view(sigma.shape)
-        low_idx = dists.ge(0).cumsum(dim=0).argmax(dim=0).clamp(max=self.log_sigmas.shape[0] - 2)
+        low_idx = dists.ge(0).int().cumsum(dim=0).argmax(dim=0).clamp(max=self.log_sigmas.shape[0] - 2)
         high_idx = low_idx + 1
         low, high = self.log_sigmas[low_idx], self.log_sigmas[high_idx]
         w = (low - log_sigma) / (low - high)
